@@ -1,0 +1,2 @@
+"""Local thesis assistant package."""
+

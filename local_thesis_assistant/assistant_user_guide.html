@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>本地 DOCX 论文规范化助手使用说明</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #111827;
+      --muted: #667085;
+      --line: #d8dde6;
+      --accent: #205cdf;
+      --accent-soft: #eaf0ff;
+      --ok: #116b4f;
+      --warn: #8a5a00;
+      --bad: #9b1c1c;
+      --code: #f1f4f8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.68;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+    header {
+      padding: 28px 0 20px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 22px;
+    }
+    h1, h2, h3 { line-height: 1.25; margin: 0 0 12px; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 24px; margin-top: 28px; }
+    h3 { font-size: 18px; margin-top: 18px; }
+    p { margin: 0 0 10px; }
+    .sub { color: var(--muted); font-size: 15px; max-width: 860px; }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      margin: 16px 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+    .box h3 { margin-top: 0; }
+    .tag {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: #1749b7;
+      border: 1px solid #c7d6ff;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 13px;
+      margin: 0 6px 6px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 11px;
+      vertical-align: top;
+      text-align: left;
+    }
+    th { background: #f2f5fa; }
+    code {
+      background: var(--code);
+      border: 1px solid #e3e8ef;
+      border-radius: 5px;
+      padding: 1px 5px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #111827;
+      color: #eef2ff;
+      padding: 14px 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+    pre code {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      padding: 0;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .step {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 118px;
+    }
+    .step .num {
+      display: inline-flex;
+      width: 24px;
+      height: 24px;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .ok { color: var(--ok); font-weight: 700; }
+    .warn { color: var(--warn); font-weight: 700; }
+    .bad { color: var(--bad); font-weight: 700; }
+    .note {
+      border-left: 4px solid var(--accent);
+      background: #f7f9ff;
+      padding: 12px 14px;
+      margin: 12px 0;
+      color: #23345d;
+    }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 4px 0; }
+    @media (max-width: 900px) {
+      .grid, .two, .flow { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>本地 DOCX 论文规范化助手使用说明</h1>
+      <p class="sub">
+        这个页面用来回答一个最实际的问题：你拿到一篇 WPS/Word 的论文 DOCX 后，应该怎样用当前项目完成读取、检查、保守修正、交叉引用链接和验证。
+      </p>
+    </header>
+
+    <section>
+      <h2>一句话理解</h2>
+      <p>
+        当前项目是一个本地运行的 DOCX 论文规范化工具。它不是在线写作机器人，而是帮你把论文文件拆开检查，再按模板规则做可回滚的格式修正。
+      </p>
+      <p>
+        标准流程是：
+      </p>
+      <div class="flow">
+        <div class="step"><span class="num">1</span><h3>模板画像</h3><p>读取学校模板或通用规则，生成格式 profile。</p></div>
+        <div class="step"><span class="num">2</span><h3>全量审查</h3><p>检查结构、段落、图表、公式、引用、域代码。</p></div>
+        <div class="step"><span class="num">3</span><h3>保守修正</h3><p>只改格式和可逆结构，不乱改论文事实内容。</p></div>
+        <div class="step"><span class="num">4</span><h3>引用链接</h3><p>把正文 [1] 做成可跳到文末参考文献的链接。</p></div>
+        <div class="step"><span class="num">5</span><h3>二次验证</h3><p>重新审查修正后的 DOCX，输出报告。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>现在能做什么</h2>
+      <div class="grid">
+        <div class="box">
+          <h3>读取与诊断</h3>
+          <p>读取 DOCX 段落、表格、图片、节、样式、域代码和参考文献编号。</p>
+          <p><span class="tag">inspect</span><span class="tag">diag</span><span class="tag">template-inspect</span></p>
+        </div>
+        <div class="box">
+          <h3>格式审查</h3>
+          <p>检查页边距、字体、字号、标题、正文、题注、三线表、段落属性。</p>
+          <p><span class="tag">audit</span><span class="tag">check</span></p>
+        </div>
+        <div class="box">
+          <h3>保守修正</h3>
+          <p>修正页边距、正文格式、标题格式、题注格式、三线表边框、段落设置。</p>
+          <p><span class="tag">fix</span><span class="tag">format</span></p>
+        </div>
+        <div class="box">
+          <h3>WPS 段落属性</h3>
+          <p>支持对齐、大纲级别、左右缩进、首行缩进、段前段后、行距、孤行控制、中文换行习惯、标点溢出、中西文间距。</p>
+          <p><span class="tag">paragraph OOXML</span></p>
+        </div>
+        <div class="box">
+          <h3>参考文献跳转</h3>
+          <p>给文末参考文献插入书签，把正文 [1] 包装成内部超链接，WPS/Word 可点击跳转。</p>
+          <p><span class="tag">link-references</span></p>
+        </div>
+        <div class="box">
+          <h3>验证与报告</h3>
+          <p>输出 JSON 和 Markdown 报告。视觉验证有安全开关，避免 Word COM 隐藏弹窗卡住。</p>
+          <p><span class="tag">verify</span><span class="tag">pipeline</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>推荐使用流程</h2>
+      <h3>第一次：先生成模板画像</h3>
+      <p>项目里已有学校模板文件，但它是旧版 <code>.doc</code>。当前工具会安全降级生成通用 profile；如果你能用 Word 手动另存为 <code>.docx</code>，再跑一次会更准确。</p>
+      <pre><code>python -m local_thesis_assistant.thesis_assistant template-inspect `
+  "local_thesis_assistant\大连民族大学本科毕业设计说明书（论文）格式要求-2024.doc.doc" `
+  --out local_thesis_assistant\outputs\template_profile.json `
+  --rules-out local_thesis_assistant\outputs\template_rules.json</code></pre>
+
+      <h3>审查一篇论文</h3>
+      <pre><code>python -m local_thesis_assistant.thesis_assistant audit `
+  your_thesis.docx `
+  --profile local_thesis_assistant\outputs\template_profile.json `
+  --json local_thesis_assistant\outputs\your_audit.json `
+  --md local_thesis_assistant\outputs\your_audit.md</code></pre>
+
+      <h3>保守修正文档</h3>
+      <p>不会覆盖原文件，会生成一个新的 DOCX。</p>
+      <pre><code>python -m local_thesis_assistant.thesis_assistant fix `
+  your_thesis.docx `
+  local_thesis_assistant\outputs\your_thesis.fixed.docx `
+  --profile local_thesis_assistant\outputs\template_profile.json</code></pre>
+
+      <h3>给参考文献做可点击跳转</h3>
+      <p>前提是正文里有 <code>[1]</code>、<code>[2]</code>，文末参考文献也有 <code>[1] xxx</code>、<code>[2] xxx</code>。</p>
+      <pre><code>python -m local_thesis_assistant.thesis_assistant link-references `
+  local_thesis_assistant\outputs\your_thesis.fixed.docx `
+  local_thesis_assistant\outputs\your_thesis.linked.docx `
+  --json local_thesis_assistant\outputs\reference_links.json</code></pre>
+
+      <h3>二次验证</h3>
+      <pre><code>python -m local_thesis_assistant.thesis_assistant verify `
+  local_thesis_assistant\outputs\your_thesis.linked.docx `
+  --profile local_thesis_assistant\outputs\template_profile.json `
+  --out-dir local_thesis_assistant\outputs\verify_your_thesis</code></pre>
+
+      <div class="note">
+        视觉验证需要启动 Word COM，并且最好安装 <code>pypdfium2</code>。为了避免 WPS/Word 隐藏弹窗卡死，真正启动 Word 前需要显式设置 <code>THESIS_ASSISTANT_ENABLE_WORD_COM_VISUAL=1</code>。
+      </div>
+    </section>
+
+    <section>
+      <h2>一条命令跑完整流程</h2>
+      <p>如果你只是想快速跑完整流程，可以用 <code>pipeline</code>。它会生成模板画像、审查修正前、修正、再验证。</p>
+      <pre><code>python -m local_thesis_assistant.thesis_assistant pipeline `
+  your_thesis.docx `
+  local_thesis_assistant\outputs\your_thesis.fixed.docx `
+  --template "local_thesis_assistant\大连民族大学本科毕业设计说明书（论文）格式要求-2024.doc.doc" `
+  --out-dir local_thesis_assistant\outputs\pipeline_your_thesis</code></pre>
+      <p>
+        注意：<code>pipeline</code> 目前不会自动执行 <code>link-references</code>。建议你在修正后单独跑一次引用链接命令，因为引用链接属于正文引用结构增强，最好明确执行。
+      </p>
+    </section>
+
+    <section>
+      <h2>命令速查</h2>
+      <table>
+        <thead>
+          <tr><th>命令</th><th>作用</th><th>常见输出</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>diag</code></td><td>检查本机是否有 Word COM、LibreOffice 等转换能力。</td><td>终端诊断结果</td></tr>
+          <tr><td><code>inspect</code></td><td>快速读取 DOCX 的段落、表格、图片和节数量。</td><td>终端摘要</td></tr>
+          <tr><td><code>template-inspect</code></td><td>从学校模板生成规则画像。</td><td><code>template_profile.json</code>、<code>template_rules.json</code></td></tr>
+          <tr><td><code>audit</code></td><td>全量审查 DOCX。</td><td><code>audit.json</code>、<code>audit.md</code></td></tr>
+          <tr><td><code>fix</code></td><td>保守修正 DOCX 格式。</td><td>新的 <code>.docx</code></td></tr>
+          <tr><td><code>link-references</code></td><td>把正文 <code>[n]</code> 链接到文末参考文献。</td><td>新的 <code>.docx</code>、链接报告</td></tr>
+          <tr><td><code>verify</code></td><td>二次审查修正后的 DOCX。</td><td><code>verify.json</code>、审查报告</td></tr>
+          <tr><td><code>pipeline</code></td><td>串起模板、审查、修正、验证。</td><td>流程输出目录</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>项目目录怎么看</h2>
+      <table>
+        <thead>
+          <tr><th>目录或文件</th><th>用途</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>local_thesis_assistant/thesis_assistant/</code></td><td>核心 Python 包。CLI、审查、修正、段落 OOXML、引用链接都在这里。</td></tr>
+          <tr><td><code>local_thesis_assistant/data/</code></td><td>样例数据、规则配置和测试文档。</td></tr>
+          <tr><td><code>local_thesis_assistant/outputs/</code></td><td>所有报告、修正后的 DOCX、模板画像和演示文件输出。</td></tr>
+          <tr><td><code>local_thesis_assistant/thesis/</code></td><td>最终论文 DOCX 成品。</td></tr>
+          <tr><td><code>local_thesis_assistant/scripts/</code></td><td>构造样本文档、训练分类器、生成论文和图表的脚本。</td></tr>
+          <tr><td><code>local_thesis_assistant/docs/</code></td><td>调研依据、标准说明、项目文档。</td></tr>
+          <tr><td><code>skills/thesis-docx-writer-cn/</code></td><td>本地 Skill，记录标准使用流程和常用命令。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>现在不能乱说已经完成的部分</h2>
+      <div class="two">
+        <div class="box">
+          <h3 class="ok">已经比较稳的</h3>
+          <ul>
+            <li>DOCX 读取和基础结构统计。</li>
+            <li>页边距、字体字号、段落属性和题注格式修正。</li>
+            <li>表格三线表边框修正。</li>
+            <li>正文引用到参考文献的内部跳转链接。</li>
+            <li>JSON / Markdown 报告。</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3 class="warn">仍然要谨慎的</h3>
+          <ul>
+            <li>旧版 <code>.doc</code> 模板转换可能被 Word 隐藏弹窗卡住。</li>
+            <li>视觉验证需要 Word COM 和 PDF 渲染依赖。</li>
+            <li>不会自动核验参考文献真假。</li>
+            <li>不会自动重写论文事实、实验结果和结论。</li>
+            <li>项目符号、编号、多级编号还没有完整实现。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>推荐你下一步怎么用</h2>
+      <p>
+        如果你现在有一篇自己的论文，最稳的做法是：
+      </p>
+      <ol>
+        <li>把论文 DOCX 放到 <code>local_thesis_assistant/outputs/</code> 或任意你记得住的位置。</li>
+        <li>先跑 <code>audit</code>，只看报告，不改文件。</li>
+        <li>确认报告没误判后跑 <code>fix</code>，生成新文件。</li>
+        <li>如果正文有 <code>[1]</code> 引用，再跑 <code>link-references</code>。</li>
+        <li>最后跑 <code>verify</code>，看剩下的问题是不是内容类问题。</li>
+      </ol>
+    </section>
+  </div>
+</body>
+</html>

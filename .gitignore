@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Generated thesis workspaces and reports
+local_thesis_assistant/outputs/
+outputs/
+*.report.json
+*.fixed.docx
+*.linked.docx
+
+# Word/WPS temporary files
+~$*
+*.tmp
+
+# Local machine noise
+.DS_Store
+Thumbs.db
