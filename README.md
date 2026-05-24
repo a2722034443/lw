@@ -1,43 +1,37 @@
-# 本地论文写作与 DOCX 规范化助手
+# 本地论文写作、DOCX 规范化与农业随机森林系统
 
-这是一个面向“软件项目类本科毕业论文”的本地助手项目。当前仓库包含两层能力：
+当前仓库包含两部分：
 
-- `local_thesis_assistant.thesis_flow`：从题目到论文草稿的 SOP 工作流骨架，覆盖选题、标准调研、文献管理、项目设计、实验计划、证据链、章节写作、内容审查和 DOCX 导出。
-- `local_thesis_assistant.thesis_assistant`：DOCX 读取、审查、保守修正、参考文献跳转链接和验证工具。
+- `local_thesis_assistant/`：论文写作 SOP、DOCX 审查、格式修正、参考文献跳转和验证工具。
+- `agri_rf_yield_system/`：基于真实公开农业数据的随机森林作物产量预测与可视化系统。
+- `skills/`：面向论文选题、文献、证据链、章节写作、质量审查和 DOCX 交付的本地 SOP Skills。
 
-## 目录
-
-- `local_thesis_assistant/`：Python 工具包、学校模板、规则和样例文档。
-- `local_thesis_assistant/thesis_assistant/`：DOCX 审查与修正核心代码。
-- `local_thesis_assistant/thesis_flow.py`：论文工作流 CLI。
-- `local_thesis_assistant/data/rules/`：默认格式规则。
-- `local_thesis_assistant/data/samples/`：可用于验证工具能力的好/坏 DOCX 样例。
-- `skills/`：SOP 型本地 Skills，供后续按流程调用。
-
-## 快速开始
-
-安装依赖：
+## 安装依赖
 
 ```powershell
 pip install -r requirements.txt
 ```
 
+## 农业随机森林系统
+
+标准流程：
+
 ```powershell
-python -m local_thesis_assistant.thesis_flow init --title "你的论文题目" --type software-project --workspace local_thesis_assistant\outputs\my_thesis
-python -m local_thesis_assistant.thesis_flow research-standards --workspace local_thesis_assistant\outputs\my_thesis --school 大连民族大学
-python -m local_thesis_assistant.thesis_flow research-literature --workspace local_thesis_assistant\outputs\my_thesis --topic "你的论文关键词" --min 20
-python -m local_thesis_assistant.thesis_flow build-outline --workspace local_thesis_assistant\outputs\my_thesis
-python -m local_thesis_assistant.thesis_flow design-project --workspace local_thesis_assistant\outputs\my_thesis
-python -m local_thesis_assistant.thesis_flow plan-experiment --workspace local_thesis_assistant\outputs\my_thesis
-python -m local_thesis_assistant.thesis_flow write-section --workspace local_thesis_assistant\outputs\my_thesis --chapter 3 --evidence evidence_map.yaml
-python -m local_thesis_assistant.thesis_flow review-draft --workspace local_thesis_assistant\outputs\my_thesis
-python -m local_thesis_assistant.thesis_flow export-docx --workspace local_thesis_assistant\outputs\my_thesis --output local_thesis_assistant\outputs\my_thesis\draft\thesis.docx
+python -m agri_rf_yield_system download-data --crop "Maize (corn)" --start-year 2000 --end-year 2023 --max-countries 40
+python -m agri_rf_yield_system build-dataset
+python -m agri_rf_yield_system train
+python -m agri_rf_yield_system evaluate
+python -m agri_rf_yield_system export-thesis-assets
+python -m agri_rf_yield_system init-thesis
+python -m agri_rf_yield_system run-app
 ```
 
-DOCX 格式工具入口：
+系统不会内置或伪造农业数据。下载失败时命令失败，论文指标只允许来自真实运行生成的 `models/metrics.json`。
+
+## 论文助手
 
 ```powershell
-python -m local_thesis_assistant.thesis_assistant diag
+python -m local_thesis_assistant.thesis_flow init --title "你的论文题目" --type software-project --workspace local_thesis_assistant\outputs\my_thesis
 python -m local_thesis_assistant.thesis_assistant audit local_thesis_assistant\data\samples\bad_sample.docx --md local_thesis_assistant\outputs\bad_audit.md
 python -m local_thesis_assistant.thesis_assistant fix local_thesis_assistant\data\samples\bad_sample.docx local_thesis_assistant\outputs\bad_sample.fixed.docx
 python -m local_thesis_assistant.thesis_assistant link-references thesis.docx thesis.linked.docx --json reference_links.json
@@ -47,5 +41,5 @@ python -m local_thesis_assistant.thesis_assistant verify local_thesis_assistant\
 ## 原则
 
 - 正式文献、正式正文和实验结论必须联网核验，不能编造。
-- 自动修正只处理可逆的格式问题，不改事实内容和实验结果。
+- 自动修正只处理可逆格式问题，不改事实内容和实验结果。
 - 原始 DOCX 不覆盖，修正结果输出到新文件。

@@ -14,6 +14,14 @@ outputs/
 *.fixed.docx
 *.linked.docx
 
+# Agriculture RF generated artifacts
+agri_rf_yield_system/data/raw/
+agri_rf_yield_system/data/processed/
+agri_rf_yield_system/models/
+agri_rf_yield_system/reports/
+agri_rf_yield_system/thesis_workspace/
+agri_rf_yield_system/.streamlit/secrets.toml
+
 # Word/WPS temporary files
 ~$*
 *.tmp
